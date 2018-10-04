@@ -6,6 +6,8 @@ classifier = fasttext.supervised('label_random1.txt', 'random_model', label_pref
 result = classifier.test('random_test.txt')
 
 print(classifier.label_prefix)
+print(classifier.labels)
+
 print('P@1:', result.precision)
 print('R@1:', result.recall)
 print('Number of examples:', result.nexamples)
