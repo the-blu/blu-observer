@@ -19,7 +19,7 @@ class Har(object):
     if url.startswith('http'):
       u = url
     else:
-      u = 'http://s' + url
+      u = 'http://' + url
 
     self.temp_file = tempfile.mktemp()
     print(self.temp_file)
