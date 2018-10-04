@@ -1,6 +1,6 @@
 from tld import get_tld, get_fld
 from urllib.parse import urlparse
-from dataset.har import Har
+from capture.har import Har
 from database.observer import Observer
 from database.site import Site
 
@@ -79,7 +79,7 @@ def main():
     offset = 0
     limit = 100
     while True:
-      sites = site.get_sites(country=c, offset=offset, limit=limit)
+      sites = site.get_sites(country=c, src='blu', offset=offset, limit=limit)
 
       if len(sites) == 0:
         break
