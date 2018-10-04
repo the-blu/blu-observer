@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
+
 import redis
-import time
 import os
 import traceback
 from tld import get_tld, get_fld
+from multiprocessing import Process
 from urllib.parse import urlparse
 from capture.har import Har
+from capture.chrome import Chrome
 from database.observer import Observer
 
 REDIS_SERVER = os.environ['REDIS_SERVER']
@@ -56,7 +59,6 @@ def do_observe(id, observer_url):
               'query_string': req_query_string
             }
             observer.add_gray(gray)
-            print('is gray: ' + str(gray))
       else:
         whites = black.get('whites', [])
         if origin in whites:
@@ -84,8 +86,17 @@ def register(url):
   else:
     return None
 
+def run_chrome(arg):
+  chrome = Chrome()
+  while True:
+    try:
+      chrome.run_headless()
+    except Exception as ex:
+      traceback.print_exc()
+      print(ex)
+
 if __name__ == '__main__':
-  print('blu-observer Start')
+  Process(target=run_chrome, args=('',)).start()
   while True:
     try:
       task_code, task_data = redis.blpop([REDIS_TOPIC_OBSERVER_URLS], 0)
