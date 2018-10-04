@@ -3,7 +3,7 @@ import json
 class BlackList(object):
   def __init__(self):
     super(BlackList,self).__init__()
-    with open('disconnect/blacklist.json') as f:
+    with open('./dataset/disconnect/blacklist.json') as f:
       data = json.load(f)
 
     categories = data['categories']
@@ -22,8 +22,8 @@ class BlackList(object):
         return self.get_hosts(data[d])
     elif isinstance(data, list):
       return data
-    else:
-      return None
+    elif isinstance(data, str):
+      return data
 
   def get_list(self):
     return self.black_list

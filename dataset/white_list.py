@@ -3,7 +3,7 @@ import json
 class WhiteList(object):
   def __init__(self):
     super(WhiteList,self).__init__()
-    with open('disconnect/whitelist.json') as f:
+    with open('./dataset/disconnect/whitelist.json') as f:
       data = json.load(f)
 
     self.white_list = {}

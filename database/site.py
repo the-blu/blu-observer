@@ -25,6 +25,7 @@ class Site(DataBase):
   def get_sites(self,
                 country=None,
                 language=None,
+                src=None,
                 offset=0, limit=100):
     query = {}
 
@@ -33,6 +34,9 @@ class Site(DataBase):
 
     if language != None:
       query['language'] = language
+
+    if src != None:
+      query['src'] = src
 
     sort = [('ranking', 1)]
 
