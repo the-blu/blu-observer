@@ -84,9 +84,10 @@ def main():
       if len(sites) == 0:
         break
 
+      offset = offset + limit
+
       for s in sites:
         capture(s['domain'])
-
 
 if __name__ == '__main__':
   main()
