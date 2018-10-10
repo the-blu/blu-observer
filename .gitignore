@@ -202,3 +202,5 @@ database/har
 dataset/blu/blu_top_1000_sites.txt
 kubernetes/config-dev.yaml
 dataset/har/
+
+dataset/disconnect/blacklist\.json
