@@ -7,6 +7,7 @@ class Observer(DataBase):
       self.blacks = self.db.blacks
       self.whites = self.db.whites
       self.grays = self.db.grays
+      self.normals = self.db.normals
       self.observers = self.db.observers
 
   def add_black(self, black):
@@ -63,6 +64,8 @@ class Observer(DataBase):
     query = {'observer_id': gray['observer_id'],
              'sub_domain': gray['sub_domain']}
 
+    gray['status'] = 'gray'
+
     r = self.grays.update_one(query,
                                {"$set": gray},
                                upsert=True)
@@ -91,6 +94,20 @@ class Observer(DataBase):
 
     try:
       r = self.blacks.find_one(query)
+    except Exception as e:
+      print(e)
+
+    return r
+
+  def get_normal(self, domain, src=None):
+    query = {}
+    query['domain'] = domain
+
+    if src != None:
+      query['src'] = src
+
+    try:
+      r = self.normals.find_one(query)
     except Exception as e:
       print(e)
 

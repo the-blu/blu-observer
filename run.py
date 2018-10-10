@@ -48,7 +48,9 @@ def do_observe(id, observer_url):
           whites = b.get('whites', [])
           if origin in whites:
             print('is white')
-          else:
+        else:
+          n = observer.get_normal(req_origin)
+          if n == None:
             gray = {
               'url': req_url,
               'observer_id': id,
