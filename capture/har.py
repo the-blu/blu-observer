@@ -29,7 +29,7 @@ class Har(object):
 
     if os.path.exists(self.temp_file) is True:
       print('success')
-      with open(self.temp_file, 'r') as f:
+      with open(self.temp_file, 'r', encoding='utf-8') as f:
         har = json.load(f)
         return har
     else:
