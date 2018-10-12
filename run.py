@@ -3,12 +3,14 @@
 import redis
 import os
 import traceback
+import json
 from tld import get_tld, get_fld
 from multiprocessing import Process
 from urllib.parse import urlparse
 from capture.har import Har
 from capture.chrome import Chrome
 from database.observer import Observer
+from detect.detector import Detector
 
 REDIS_SERVER = os.environ['REDIS_SERVER']
 REDIS_PASSWORD = os.environ['REDIS_PASSWORD']
@@ -17,68 +19,85 @@ redis = redis.StrictRedis(host=REDIS_SERVER, password=REDIS_PASSWORD)
 
 har = Har()
 observer = Observer()
+chrome = Chrome()
+detector = Detector(observer)
 
-def do_observe(id, observer_url):
-  print('start observe : ' + observer_url)
-  if observer_url.startswith('http'):
-    origin = get_fld(observer_url)
+def get_origin(url):
+  if url.startswith('http'):
+    origin = get_fld(url)
   else:
-    origin = get_fld('http://' + observer_url)
+    origin = get_fld('http://' + url)
+  return origin
 
-  data = har.capture(observer_url)
-  # print(data)
-  entries = data['log']['entries']
+# def do_observe(id, observer_url, language):
+#
+#   origin = get_origin(observer_url)
+#
+#   data = har.capture(observer_url)
+#   # print(data)
+#
+#   try:
+#     entries = data['log']['entries']
+#
+#     for entry in entries:
+#       req = entry['request']
+#       req_url = req['url']
+#       req_origin = get_fld(req_url)
+#
+#       u = urlparse(req_url)
+#       req_sub_domain = u.netloc
+#       req_path = u.path
+#       req_query_string = req.get('queryString', {})
+#
+#       if origin != req_origin:
+#         black = observer.get_black(sub_domain=req_sub_domain, src='blu')
+#
+#         if black == None:
+#           b = observer.get_black(domain=req_origin)
+#           if b != None:
+#             whites = b.get('whites', [])
+#             if origin in whites:
+#               print('is white')
+#           else:
+#             n = observer.get_normal(req_sub_domain)
+#             if n == None:
+#               gray = {
+#                 'url': req_url,
+#                 'observer_id': id,
+#                 'sub_domain': req_sub_domain,
+#                 'domain': req_origin,
+#                 'observer_url': observer_url,
+#                 'path': req_path,
+#                 'query_string': req_query_string,
+#                 'language': language
+#               }
+#               observer.add_gray(gray)
+#         else:
+#           whites = black.get('whites', [])
+#           if origin in whites:
+#             print('is white')
+#           else:
+#             print('is black: ' + req_origin)
+#       else:
+#         print('is origin: ' + req_origin)
+#   except Exception as e:
+#     print(e)
+#
+#   data = {
+#     'status': 'done'
+#   }
+#   observer.update_observer(id, data)
 
-  for entry in entries:
-    req = entry['request']
-    req_url = req['url']
-    req_origin = get_fld(req_url)
-
-    u = urlparse(req_url)
-    req_sub_domain = u.netloc
-    req_path = u.path
-    req_query_string = req.get('queryString', {})
-
-    if origin != req_origin:
-      black = observer.get_black(req_sub_domain, src='blu')
-
-      if black == None:
-        b = observer.get_black(req_origin)
-        if b != None:
-          whites = b.get('whites', [])
-          if origin in whites:
-            print('is white')
-        else:
-          n = observer.get_normal(req_origin)
-          if n == None:
-            gray = {
-              'url': req_url,
-              'observer_id': id,
-              'sub_domain': req_sub_domain,
-              'domain': req_origin,
-              'observer_url': observer_url,
-              'path': req_path,
-              'query_string': req_query_string
-            }
-            observer.add_gray(gray)
-      else:
-        whites = black.get('whites', [])
-        if origin in whites:
-          print('is white')
-        else:
-          print('is black: ' + req_url)
-    else:
-      print('is origin: ' + req_url)
-
-  data = {
-    'status': 'done'
-  }
-  observer.update_observer(id, data)
-
-def register(url):
+def register(url, language):
+  u = urlparse(url)
+  sub_domain = u.netloc
+  path = u.path
 
   data = {
     'url': url,
+    'sub_domain': sub_domain,
+    'path': path,
+    'language': language,
     'status': 'doing'
   }
   res = observer.add_observer(data)
@@ -88,26 +107,22 @@ def register(url):
   else:
     return None
 
-def run_chrome(arg):
-  chrome = Chrome()
-  while True:
-    try:
-      chrome.run_headless()
-    except Exception as ex:
-      traceback.print_exc()
-      print(ex)
-
 if __name__ == '__main__':
-  Process(target=run_chrome, args=('',)).start()
+  chrome.run()
+
   while True:
     try:
       task_code, task_data = redis.blpop([REDIS_TOPIC_OBSERVER_URLS], 0)
       if task_data:
-        url = task_data.decode("utf-8")
-
-        id = register(url)
-        if id is not None:
-          do_observe(id, url)
+        urlData = task_data.decode("utf-8")
+        urlObj = json.loads(urlData)
+        if urlObj is not None:
+          url = urlObj.get('url', None)
+          if url is not None:
+            language = urlObj['language']
+            id = register(url, language)
+            if id is not None:
+              detector.run(id, url, language)
 
     except Exception as ex:
       traceback.print_exc()

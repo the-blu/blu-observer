@@ -1,8 +1,7 @@
 import os
 import json
-from tld import get_tld, get_fld
+from urllib.parse import urlencode
 import tempfile
-from urllib.parse import urlparse
 
 UA = "'Mozilla/5.0 (Linux; Android 5.0; SM-G900P Build/LRX21T) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Mobile Safari/537.36'"
 
@@ -24,16 +23,19 @@ class Har(object):
     self.temp_file = tempfile.mktemp()
     print(self.temp_file)
 
-    cmd = 'chrome-har-capturer -p 9222 -o %s %s -a %s' % (self.temp_file, u, UA)
+    url = u.replace('&', '\&')
+    cmd = 'chrome-har-capturer -p 9222 -o %s %s -a %s' % (self.temp_file, url, UA)
     os.system(cmd)
 
     if os.path.exists(self.temp_file) is True:
       print('success')
       with open(self.temp_file, 'r', encoding='utf-8') as f:
         har = json.load(f)
+        self.clear()
         return har
     else:
       print('fail')
+      self.clear()
       return None
 
   def clear(self):

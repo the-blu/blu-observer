@@ -1,93 +1,54 @@
-from tld import get_tld, get_fld
-from urllib.parse import urlparse
-from capture.har import Har
-from database.observer import Observer
+# -*- coding: utf-8 -*-
+
+import traceback
+from capture.chrome import Chrome
 from database.site import Site
+from util.urlutil import UrlUtil
+from database.dataset import DataSet
+from capture.capturer import Capturer
 
 COUNTRIES = ['KR', 'US', 'VN', 'ID']
 
-har = Har()
-observer = Observer()
+urlUtil = UrlUtil()
 site = Site()
+chrome = Chrome()
+dataset = DataSet()
+capturer = Capturer()
 
+def validate_site(url):
+  p = urlUtil.url_parse(url)
+  host = p['sub_domain']
+  path = p['path']
 
-def capture(url):
-  origin = get_fld('http://%s' % url)
-  # print(origin)
+  data = {}
+  data['host'] = host
+  data['path'] = path
+  res = dataset.get_data(data)
 
-  label = {
-    'domain': url,
-    'label_f': None,
-    'label_t': None
-  }
-
-  label_t = []
-  label_f = []
-
-  data = har.capture(url)
-
-  entries = data['log']['entries']
-
-  for entry in entries:
-    info = {
-      'sub_domain': None,
-      'path': None,
-      'query_string': None
-    }
-
-    req = entry['request']
-    url = req['url']
-    req_origin = get_fld(url)
-
-    u = urlparse(url)
-    info['sub_domain'] = u.netloc
-    info['path'] = u.path
-    info['query_string'] = req.get('queryString', {})
-
-    if origin != req_origin:
-      # print('req_origin', req_origin)
-      # print('sub_comain', sub_domain)
-      black = observer.get_black(req_origin)
-
-      if black == None:
-        b = observer.get_black(info['sub_domain'], src='blu')
-        if b != None:
-          whites = b.get('whites', [])
-          if origin in whites:
-            # print('white 1')
-            label_t.append(info)
-          else:
-            label_f.append(info)
-      else:
-        whites = black.get('whites', [])
-        if origin in whites:
-          # print('white 2')
-          label_t.append(info)
-        else:
-          label_f.append(info)
-    else:
-      label_t.append(info)
-
-  label['label_t'] = label_t
-  label['label_f'] = label_f
-  print(label)
-
-  # har.clear("facebook.com")
-
-def main():
-  for c in COUNTRIES:
-    offset = 0
-    limit = 100
-    while True:
-      sites = site.get_sites(country=c, src='blu', offset=offset, limit=limit)
-
-      if len(sites) == 0:
-        break
-
-      offset = offset + limit
-
-      for s in sites:
-        capture(s['domain'])
+  if res == None:
+    return True
+  else:
+    return False
 
 if __name__ == '__main__':
-  main()
+
+  chrome.run()
+  try:
+    for c in COUNTRIES:
+      offset = 0
+      limit = 100
+      while True:
+        sites = site.get_sites(country=c, offset=offset, limit=limit)
+
+        if len(sites) == 0:
+          break
+
+        offset = offset + limit
+
+        for s in sites:
+          if validate_site(s['domain']):
+            capturer.run(s['domain'])
+
+  except Exception as ex:
+    traceback.print_exc()
+    print(ex)

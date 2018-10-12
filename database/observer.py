@@ -14,7 +14,7 @@ class Observer(DataBase):
     res = {'result': 'success',
            'message': None}
 
-    query = {"domain": black.get('domain', None)}
+    query = {"sub_domain": black.get('sub_domain', None)}
     r = self.blacks.update_one(query,
                                  {"$set": black},
                                  upsert=True)
@@ -31,7 +31,8 @@ class Observer(DataBase):
            'id': None,
            'message': None}
 
-    query = {"url": observer['url']}
+    query = {"sub_domain": observer['sub_domain'],
+             "path": observer['path']}
 
     r = self.observers.update_one(query,
                                   {"$set": observer},
@@ -78,16 +79,21 @@ class Observer(DataBase):
     return res
 
   def add_white(self, black, white):
-    query = {"domain": black}
+    query = {"sub_domain": black}
     r = self.blacks.update_one(query,
                                {"$addToSet": {
                                  'whites': white
                                }},
                                upsert=True)
 
-  def get_black(self, domain, src=None):
+  def get_black(self, domain=None, sub_domain=None, src=None):
     query = {}
-    query['domain'] = domain
+
+    if domain != None:
+      query['domain'] = domain
+
+    if sub_domain != None:
+      query['sub_domain'] = sub_domain
 
     if src != None:
       query['src'] = src
@@ -99,9 +105,9 @@ class Observer(DataBase):
 
     return r
 
-  def get_normal(self, domain, src=None):
+  def get_normal(self, sub_domain, src=None):
     query = {}
-    query['domain'] = domain
+    query['sub_domain'] = sub_domain
 
     if src != None:
       query['src'] = src
