@@ -15,7 +15,7 @@ labels = Labels()
 
 def make_text(data):
   text = transform.clean(data)
-  print(text)
+  # print(text)
 
   return None
 

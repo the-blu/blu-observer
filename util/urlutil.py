@@ -25,6 +25,7 @@ class UrlUtil(object):
     return d
 
   def remove_tld(self, url):
+
     if self.tlds is None:
       self.load_tlds()
     url = url.split(':')[0]
@@ -39,9 +40,12 @@ class UrlUtil(object):
       last_i_elements = url_elements[i:]
       # print(last_i_elements)
       candidate = ".".join(last_i_elements)  # abcde.co.uk, co.uk, uk
+
+      # print(self.tlds)
       if (candidate in self.tlds):
+
         r = ".".join(url_elements[:i])
-        # print(r)
+
         return r
 
   # def get_domain(self, url):

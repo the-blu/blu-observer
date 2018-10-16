@@ -29,6 +29,7 @@ class Transform(object):
       paths = self.split_in_list(paths)
       # print(paths)
       sentence.extend(paths)
+      # print(sentence)
 
     sentence = list(filter(None, sentence))
     sentence = list(set(sentence))
