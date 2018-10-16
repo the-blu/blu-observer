@@ -2,11 +2,11 @@ import os
 from pymongo import MongoClient
 
 
-DB_HOST = os.environ['DB_PRODUCT_HOST']
-DB_PORT = os.environ['DB_PRODUCT_PORT']
-DB_NAME = os.environ['DB_PRODUCT_NAME']
-DB_USER = os.environ['DB_PRODUCT_USER']
-DB_PASSWORD = os.environ['DB_PRODUCT_PASSWORD']
+DB_HOST = os.environ['DB_OBSERVER_HOST']
+DB_PORT = os.environ['DB_OBSERVER_PORT']
+DB_NAME = os.environ['DB_OBSERVER_NAME']
+DB_USER = os.environ['DB_OBSERVER_USER']
+DB_PASSWORD = os.environ['DB_OBSERVER_PASSWORD']
 
 class DataBase(object):
   def __init__(self):
