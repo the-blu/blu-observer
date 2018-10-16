@@ -27,6 +27,7 @@ class UrlUtil(object):
   def remove_tld(self, url):
     if self.tlds is None:
       self.load_tlds()
+    url = url.split(':')[0]
 
     if url.startswith('http') != True:
       url = 'http://' + url

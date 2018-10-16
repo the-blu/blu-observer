@@ -8,10 +8,9 @@ from dataset.train.transform import Transform
 LABEL_T = '__label__t'
 LABEL_F = '__label__f'
 
-
 urlUtil = UrlUtil()
-transform = Transform()
 labels = Labels()
+transform = Transform()
 
 def make_text(data):
   text = transform.clean(data)
