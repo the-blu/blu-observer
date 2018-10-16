@@ -33,7 +33,7 @@ class DataSet(DataBase):
     return res
 
 
-  def get_data(self, data, src=None):
+  def get_datum(self, data, src=None):
     query = {}
 
     query = {}
@@ -54,3 +54,84 @@ class DataSet(DataBase):
 
     return r
 
+  def get_data(self,
+              offset=0, limit=100):
+    query = {}
+    projection = {}
+
+    try:
+      r = self.dataset.find(query, projection).skip(offset).limit(limit)
+    except Exception as e:
+      print(e)
+
+    return list(r)
+
+  def get_blacks(self,
+                 domain=None,
+                 sub_domain=None,
+                 language=None,
+                 path=None,
+                 src=None,
+                 offset=0, limit=100):
+    query = {}
+
+    if domain != None:
+      query['domain'] = domain
+
+    if sub_domain != None:
+      query['sub_domain'] = sub_domain
+
+    if path != None:
+      query['path'] = path
+
+    if language != None:
+      query['language'] = language
+
+    if src != None:
+      query['src'] = src
+
+    projection = {
+      'label_t': 1
+    }
+
+    try:
+      r = self.dataset.find(query, projection).skip(offset).limit(limit)
+    except Exception as e:
+      print(e)
+
+    return list(r)
+
+  def get_whites(self,
+                 domain=None,
+                 sub_domain=None,
+                 language=None,
+                 path=None,
+                 src=None,
+                 offset=0, limit=100):
+    query = {}
+
+    if domain != None:
+      query['domain'] = domain
+
+    if sub_domain != None:
+      query['sub_domain'] = sub_domain
+
+    if path != None:
+      query['path'] = path
+
+    if language != None:
+      query['language'] = language
+
+    if src != None:
+      query['src'] = src
+
+    projection = {
+      'label_f': 1
+    }
+
+    try:
+      r = self.dataset.find(query, projection).skip(offset).limit(limit)
+    except Exception as e:
+      print(e)
+
+    return list(r)

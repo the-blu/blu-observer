@@ -11,7 +11,7 @@ bl = black.get_list()
 wl = white.get_list()
 
 for b in bl:
-  res = observer.add_black({'domain': b, 'src': 'disconnect'})
+  res = observer.add_black({'sub_domain': b, 'src': 'disconnect'})
   print(res)
 
 for w in wl:

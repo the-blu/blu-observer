@@ -11,7 +11,7 @@ def upload(file):
     domains = data.keys()
 
     for b in domains:
-      res = observer.add_black({'domain': b.replace('?', '.'), 'src': 'blu'})
+      res = observer.add_black({'sub_domain': b.replace('?', '.'), 'src': 'blu'})
       print(res)
 
 def main():

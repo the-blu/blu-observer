@@ -80,11 +80,16 @@ class Observer(DataBase):
 
   def add_white(self, black, white):
     query = {"sub_domain": black}
-    r = self.blacks.update_one(query,
-                               {"$addToSet": {
-                                 'whites': white
-                               }},
-                               upsert=True)
+
+    try:
+      r = self.blacks.update_one(query,
+                                 {"$addToSet": {
+                                   'whites': white
+                                 }},
+                                 upsert=True)
+    except Exception as e:
+      print(e)
+    return r.raw_result
 
   def get_black(self, domain=None, sub_domain=None, src=None):
     query = {}
@@ -104,6 +109,37 @@ class Observer(DataBase):
       print(e)
 
     return r
+
+  def get_blacks(self,
+                domain=None,
+                sub_domain=None,
+                language=None,
+                path=None,
+                src=None,
+                offset=0, limit=100):
+    query = {}
+
+    if domain != None:
+      query['domain'] = domain
+
+    if sub_domain != None:
+      query['sub_domain'] = sub_domain
+
+    if path != None:
+      query['path'] = path
+
+    if language != None:
+      query['language'] = language
+
+    if src != None:
+      query['src'] = src
+
+    try:
+      r = self.blacks.find(query).skip(offset).limit(limit)
+    except Exception as e:
+      print(e)
+
+    return list(r)
 
   def get_normal(self, sub_domain, src=None):
     query = {}

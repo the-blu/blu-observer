@@ -23,7 +23,7 @@ def validate_site(url):
   data = {}
   data['host'] = host
   data['path'] = path
-  res = dataset.get_data(data)
+  res = dataset.get_datum(data)
 
   if res == None:
     return True

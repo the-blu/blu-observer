@@ -41,46 +41,48 @@ class Capturer(object):
       entries = data['log']['entries']
 
       for entry in entries:
-        info = {
-          'sub_domain': None,
-          'path': None,
-          'query_string': None
-        }
-        observer = Observer()
+        try:
+          observer = Observer()
 
-        req = entry['request']
-        url = req['url']
-        req_origin = self.urlUtil.get_origin(url)
+          req = entry['request']
+          url = req['url']
+          req_origin = self.urlUtil.get_origin(url)
 
-        info = self.urlUtil.url_parse(url)
-        info['query_string'] = req.get('queryString', {})
+          info = self.urlUtil.url_parse(url)
+          info['query_string'] = req.get('queryString', {})
 
-        if origin != req_origin:
-          # print('req_origin', req_origin)
-          # print('sub_comain', sub_domain)
-          black = observer.get_black(req_origin)
+          if origin != req_origin:
+            # print('req_origin', req_origin)
+            # print('sub_comain', sub_domain)
+            black = observer.get_black(sub_domain=req_origin)
 
-          if black == None:
-            b = observer.get_black(info['sub_domain'], src='blu')
-            if b != None:
-              whites = b.get('whites', [])
-              if origin in whites:
-                # print('white 1')
-                label_t.append(info)
-              else:
-                label_f.append(info)
-          else:
-            whites = black.get('whites', [])
-            if origin in whites:
-              # print('white 2')
-              label_t.append(info)
+            if black == None:
+              b = observer.get_black(sub_domain=info['sub_domain'], src='blu')
+              if b != None:
+                whites = b.get('whites', [])
+                if origin in whites:
+                  # print('white 1')
+                  label_f.append(info)
+                else:
+                  label_t.append(info)
             else:
-              label_f.append(info)
-        else:
-          label_t.append(info)
+              whites = black.get('whites', [])
+              if origin in whites:
+                # print('white 2')
+                label_f.append(info)
+              else:
+                label_t.append(info)
+          else:
+            label_f.append(info)
+        except Exception as e:
+          traceback.print_exc()
+          continue
 
-      label['label_t'] = label_t
-      label['label_f'] = label_f
+      if len(label_f) > 0:
+        label['label_f'] = label_f
+
+      if len(label_t) > 0:
+        label['label_t'] = label_t
 
       dataset = DataSet()
       dataset.add_data(label)

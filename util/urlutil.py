@@ -5,8 +5,11 @@ from tld import get_tld, get_fld
 class UrlUtil(object):
   def __init__(self):
     super(UrlUtil,self).__init__()
-    # with open("./util/effective_tld_names.dat") as tld_file:
-    #   self.tlds = [line.strip() for line in tld_file if line[0] not in "/\n"]
+    self.tlds = None
+
+  def load_tlds(self):
+    with open("./util/effective_tld_names.dat") as tld_file:
+      self.tlds = [line.strip() for line in tld_file if line[0] not in "/\n"]
 
   def get_origin(self, url):
     origin = get_fld(url, fix_protocol=True)
@@ -20,6 +23,25 @@ class UrlUtil(object):
     d['sub_domain'] = u.netloc
     d['path'] = u.path
     return d
+
+  def remove_tld(self, url):
+    if self.tlds is None:
+      self.load_tlds()
+
+    if url.startswith('http') != True:
+      url = 'http://' + url
+    a = urlparse(url)
+    url_elements = a[1].split('.')
+    # url_elements = ["abcde","co","uk"]
+
+    for i in range(-len(url_elements), 0):
+      last_i_elements = url_elements[i:]
+      # print(last_i_elements)
+      candidate = ".".join(last_i_elements)  # abcde.co.uk, co.uk, uk
+      if (candidate in self.tlds):
+        r = ".".join(url_elements[:i])
+        # print(r)
+        return r
 
   # def get_domain(self, url):
   #   if url.startswith('http') != True:
