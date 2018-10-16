@@ -1,3 +1,0 @@
-__label__s greet Good Night
-__label__s greet Good luck
-__label__q question What is your name ?

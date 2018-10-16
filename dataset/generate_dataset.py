@@ -9,15 +9,22 @@ from os.path import splitext
 # COUNTRIES = ['KR', 'US', 'VN', 'ID']
 COUNTRIES = ['KR']
 
+
 har = Har()
 observer = Observer()
 site = Site()
-f = open("label_f_t1.txt", "w")
+# f = open("label_f_t2.txt", "w")
+
+d = []
+
 
 def capture(url):
 
 
-  origin = get_fld('http://%s' % url)
+  origin = get_fld('http://%s' % url, fail_silently=True)
+  if origin is None:
+    print("error: TldDomainNotFount")
+    pass
   # print(origin)
 
   label = {
@@ -42,7 +49,14 @@ def capture(url):
 
     req = entry['request']
     url = req['url']
-    req_origin = get_fld(url)
+    req_origin = get_fld(url, fail_silently=True)
+
+    if req_origin is None:
+      print("error: TldDomainNotFount")
+      pass
+
+
+    # print(req_origin)
 
     u = urlparse(url)
     info['sub_domain'] = u.netloc
@@ -82,10 +96,9 @@ def capture(url):
   label['label_f'] = label_f
   print(label)
 
+  d.append(label)
 
 
-
-  # f.write(str(label)+'\n')
 
   # f.write(json.dumps(label, indent=2))
 
@@ -95,17 +108,37 @@ def capture(url):
   # har.clear("facebook.com")
 
 def main():
+
+  # with open('dataset.json', 'r', encoding="utf-8") as data_file:
+  #   old_data = json.load(data_file)
+
   for c in COUNTRIES:
-    offset = 0
-    limit = 100
+    offset = 990 #872 #start #891
+    limit = 1000
+
+    # offset = offset + limit
     while True:
-      sites = site.get_sites(country=c, src='blu', offset=offset, limit=limit)
+      sites = site.get_sites(country=c, offset=offset, limit=limit) #, src='blu'
 
       if len(sites) == 0:
         break
+        # breakcapture(s['domain'])
 
+      offset = offset + limit
+      print(offset)
+      # cnt=0
       for s in sites:
+        # print(cnt)
         capture(s['domain'])
+        with open('dataset.json', 'w', encoding="utf-8") as make_file:
+          json.dump(d, make_file, ensure_ascii=False, indent='\t')
+        # with open('dataset.json', 'w', encoding="utf-8") as make_file:
+        #   json.dump(old_data+d, make_file, ensure_ascii=False, indent='\t')
+        # cnt += 1
+
+
+
+
 
 
 if __name__ == '__main__':
