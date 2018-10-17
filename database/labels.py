@@ -50,6 +50,7 @@ class Labels(DataBase):
 
     try:
       r = self.labels.find(query).skip(offset).limit(limit)
+      # print(r)
     except Exception as e:
       print(e)
 
