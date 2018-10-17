@@ -33,6 +33,8 @@ class UrlUtil(object):
     if url.startswith('http') != True:
       url = 'http://' + url
     a = urlparse(url)
+    # print(a)
+    # print(a[1])
     url_elements = a[1].split('.')
     # url_elements = ["abcde","co","uk"]
 

@@ -2,12 +2,12 @@ import json
 from collections import OrderedDict
 
 # f = open("data1.txt", "w") #edit
-f = open("./url-dataset/ko/data1_4.txt", "w") #edit
+f = open("./url-dataset/ko/data6.txt", "w") #edit
 
 
 def rm_dup():
     # f1 = open('data1.txt','r+') #edit
-    f1 = open('./url-dataset/ko/data1_4.txt','r+') #edit
+    f1 = open('./url-dataset/ko/data6.txt','r+') #edit
 
     fdata = f1.readlines()
     f1.seek(0)

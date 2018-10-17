@@ -13,21 +13,31 @@ class Transform(object):
 
   def clean(self, data):
     sentence = []
+
+    # print(data)
     sub_domain = data.get('sub_domain', None)
+    # print(sub_domain)
     sub_domain_name = self.urlUtil.remove_tld(sub_domain)
     sub_domain_name = self.split_in_string(sub_domain_name)
     # print(sub_domain_name)
+
     sentence.extend(sub_domain_name)
+
     path = data.get('path', None)
     path = path.lower()
+    # print(path)
     # self.normalize(path)
     # sentence.extend(path.split('/'))
+    print('s: ',sentence)
+    print('p: ', path)
     if self.is_normal_content(path) is False:
       path = self.remove_digits(path)
       paths = self.split_path(path)
       paths = self.remove_value(paths)
+
       paths = self.split_in_list(paths)
       # print(paths)
+
       sentence.extend(paths)
       # print(sentence)
 
@@ -35,8 +45,10 @@ class Transform(object):
     sentence = list(set(sentence))
     self.remove_except_words(sentence)
     self.remove_except_keywords(sentence)
+
     self.remove_symbol(sentence)
     sentence = self.remove_single_char(sentence)
+
     return sentence
 
   def remove_single_char(self, data):
@@ -65,6 +77,7 @@ class Transform(object):
 
   def remove_value(self, paths):
     p = []
+
     for s in paths:
       s = s.split('=')[0]
       p.append(self.replace_percent(s))

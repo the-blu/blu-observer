@@ -13,6 +13,7 @@ dataset = DataSet()
 labels = Labels()
 
 def add_labels(label, data):
+  print(data)
   if data is not None:
     for d in data:
       d['label'] = label

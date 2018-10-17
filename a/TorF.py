@@ -1,7 +1,7 @@
 import random
 import os
 import fasttext
-f = open('./test-result/vi/result1-5.txt', 'w') #edit
+f = open('./test-result/ko/result6.txt', 'w') #edit
 
 def train(fname):
 
@@ -18,7 +18,7 @@ def train(fname):
     # texts = ['m.kbcard.com/cxh/js/mblhomeIa/lib/cxhia.js?', 'pagead.googlesyndication.com/pagead/js/r/r/show_ads_impl.js', 'compass.adop.cc/RD/deaa-c-b-bf-eae', 'common.like.naver.com/css/likeItButton_TVCAST.css?', 'page.kakao.com/static/common/icon_trace_off.png?baffeabfefffcbb']
 
     vi = []
-    fvi = open('./url-dataset/vi/data5.txt', 'r')
+    fvi = open('./url-dataset/ko/data6.txt', 'r')
     fvidata = fvi.readlines()
     for i in fvidata:
         vi.append(i[11:])
@@ -37,7 +37,7 @@ def get_dataset(ht, hf, tt, tf, file):
 
 
 def main():
-    f1 = open('./url-dataset/ko/data4_1.txt', 'r') #edit
+    f1 = open('./url-dataset/ko/data6.txt', 'r') #edit
     f2 = open('../b/data1_final_t.txt', 'w')
     f3 = open('../b/data1_final_f.txt', 'w')
 
