@@ -1,46 +1,38 @@
 # -*- coding: utf-8 -*-
 
 import traceback
-from util.urlutil import UrlUtil
-from database.labels import Labels
-from dataset.train.transform import Transform
+from database.observer import Observer
 
-LABEL_T = '__label__t'
-LABEL_F = '__label__f'
 
-urlUtil = UrlUtil()
-labels = Labels()
-transform = Transform()
+observer = Observer()
 
-def make_text(data):
-  text = transform.clean(data)
-  print(text)
-
-  return None
 
 def generate():
   try:
     offset = 0
     limit = 100
-    with open('labled_dataset.dat', 'w') as f:
-      while True:
-        data = labels.get_labels(offset=offset, limit=limit)
+    while True:
+      list = observer.get_observers(offset=offset, limit=limit)
 
-        if len(data) == 0:
-          break
+      print(offset)
+      if len(list) == 0:
+        break
 
-        for d in data:
-          t = make_text(d)
-          # print(t)
-          # f.write(t)
+      for o in list:
+        observer_id = str(o['_id'])
+        grays = observer.get_grays(observer_id=observer_id)
+        if len(grays) == 0:
+          r = observer.delete_observer(observer_id)
+          print(r)
+        else:
+          print('.')
 
-        offset = offset + limit
+      offset = offset + limit
 
   except Exception as ex:
     traceback.print_exc()
     print(ex)
 
-  f.close()
 
 if __name__ == '__main__':
   generate()

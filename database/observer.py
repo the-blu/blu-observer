@@ -46,6 +46,25 @@ class Observer(DataBase):
 
     return res
 
+  def get_observers(self,
+                 sub_domain=None,
+                 path=None,
+                 offset=0, limit=100):
+    query = {}
+
+    if sub_domain != None:
+      query['sub_domain'] = sub_domain
+
+    if path != None:
+      query['path'] = path
+
+    try:
+      r = self.observers.find(query).skip(offset).limit(limit)
+    except Exception as e:
+      print(e)
+
+    return list(r)
+
   def update_observer(self, id, observer):
     res = {'result': 'success',
            'message': None}
@@ -57,6 +76,18 @@ class Observer(DataBase):
                               upsert=False)
 
     return r
+
+  def delete_observer(self, id):
+
+    query = {
+      '_id': ObjectId(id)
+    }
+
+    try:
+      r = self.observers.delete_one(query)
+    except Exception as e:
+      print(e)
+    return r.raw_result
 
   def add_gray(self, gray):
     res = {'result': 'success',
@@ -164,3 +195,26 @@ class Observer(DataBase):
     except Exception as e:
       print(e)
     return r.raw_result
+
+  def get_grays(self,
+                observer_id=None,
+                 sub_domain=None,
+                 path=None,
+                 offset=0, limit=100):
+    query = {}
+
+    if observer_id != None:
+      query['observer_id'] = observer_id
+
+    if sub_domain != None:
+      query['sub_domain'] = sub_domain
+
+    if path != None:
+      query['path'] = path
+
+    try:
+      r = self.grays.find(query).skip(offset).limit(limit)
+    except Exception as e:
+      print(e)
+
+    return list(r)
