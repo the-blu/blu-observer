@@ -23,13 +23,16 @@ class Transform(object):
 
     sentence.extend(sub_domain_name)
 
+    label = data.get('label',None)
+    # print(label)
+
     path = data.get('path', None)
     path = path.lower()
     # print(path)
     # self.normalize(path)
     # sentence.extend(path.split('/'))
-    print('s: ',sentence)
-    print('p: ', path)
+    # print('s: ',sentence)
+    # print('p: ', path)
     if self.is_normal_content(path) is False:
       path = self.remove_digits(path)
       paths = self.split_path(path)
@@ -49,7 +52,11 @@ class Transform(object):
     self.remove_symbol(sentence)
     sentence = self.remove_single_char(sentence)
 
-    return sentence
+    return sentence, label
+    # return sentence
+
+
+
 
   def remove_single_char(self, data):
     data = [i for i in data if len(i) > 1]

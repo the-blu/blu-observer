@@ -1,7 +1,7 @@
 import random
 import os
 import fasttext
-f = open('./test-result/ko/result6.txt', 'w') #edit
+f = open('./test-result/ko/result10.txt', 'w') #edit
 
 def train(fname):
 
@@ -13,18 +13,21 @@ def train(fname):
     recall = 'R@1: ' + '%s' % result.recall
     num_ex = 'Number of examples: ' + '%s' % result.nexamples
     f.write(fname + '\n' + precison + '\n' + recall + '\n' + num_ex + '\n')
+    print(fname + '\n' + precison + '\n' + recall + '\n' + num_ex + '\n')
 
-    # texts = ['m.kbcard.com/cxh/js/mblhomeIa/lib/cxhia.js?201711161558', 'pagead2.googlesyndication.com/pagead/js/r20181001/r20180604/show_ads_impl.js', 'compass.adop.cc/RD/dea00a01-c096-459b-b57f-5ea292222e38', 'common.like.naver.com/css/likeItButton_TVCAST.css?20140326', 'page.kakao.com/static/common/icon_trace_off.png?509ba8ff2e3abf181e390f7f8f84cb0b']
+    texts = ['wordpress ko', 'weblogin kakao cddacbcc', 'hanatour abcdaefdadeedfdcb', 'delivery mediawayss ad impress', 'doubleclick ad rqctn rcunu gyglingm ddm gpaa xwcm', 'ad pzjzyfqq dable thumbnails']
+    # texts = ['m kbcard com cxh mblhomeIa lib cxhia', 'doubleclick ad leheq cqaabf ddm cr', 'jtbc fs edit data joins ', 'ssp ad','ax criteo']
     # texts = ['m.kbcard.com/cxh/js/mblhomeIa/lib/cxhia.js?', 'pagead.googlesyndication.com/pagead/js/r/r/show_ads_impl.js', 'compass.adop.cc/RD/deaa-c-b-bf-eae', 'common.like.naver.com/css/likeItButton_TVCAST.css?', 'page.kakao.com/static/common/icon_trace_off.png?baffeabfefffcbb']
 
-    vi = []
-    fvi = open('./url-dataset/ko/data6.txt', 'r')
-    fvidata = fvi.readlines()
-    for i in fvidata:
-        vi.append(i[11:])
+    # vi = []
+    # fvi = open('./url-dataset/ko/data10.txt', 'r')
+    # fvidata = fvi.readlines()
+    # for i in fvidata:
+    #     vi.append(i[11:])
 
 
-    labels = classifier.predict(vi, k=1)
+    labels = classifier.predict_proba(texts, k=1)
+    print(labels)
     f.write('%s'%labels + '\n'*3)
 
 def get_dataset(ht, hf, tt, tf, file):
@@ -37,7 +40,8 @@ def get_dataset(ht, hf, tt, tf, file):
 
 
 def main():
-    f1 = open('./url-dataset/ko/data6.txt', 'r') #edit
+    # f1 = open('./url-dataset/ko/data6.txt', 'r') #edit
+    f1 = open('../make_train.txt', 'r')  # edit
     f2 = open('../b/data1_final_t.txt', 'w')
     f3 = open('../b/data1_final_f.txt', 'w')
 
@@ -49,7 +53,7 @@ def main():
     count_f = 0
 
     for i in fdata:
-        if i[:10] == '__label__T':
+        if i[:10] == '__label__f':
             t.append(i)
             count_t += 1
         else:
@@ -89,6 +93,7 @@ def main():
 
             file = tf_ratio + '/' + test_train_ratio
             # print(file)
+            print(head_t, head_f, tail_t, tail_f)
             get_dataset(head_t, head_f, tail_t, tail_f, file)
 
 

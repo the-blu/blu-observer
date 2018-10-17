@@ -12,11 +12,22 @@ LABEL_F = '__label__f'
 urlUtil = UrlUtil()
 transform = Transform()
 labels = Labels()
+fl = open('make_train.txt','w')
 
 def make_text(data):
-  # print(data)
-  text = transform.clean(data)
-  print(text)
+
+  text,l = transform.clean(data)
+
+  print(l)
+  if not text:
+    pass
+  else:
+    fl.write(l + ' ')
+    for i in text:
+      fl.write(i+' ')
+    fl.write('\n')
+    print(text)
+
 
   return None
 

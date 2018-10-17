@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 def main():
-    f1 = open('./url-dataset/ko/data4_1.txt','r+')
+    f1 = open('../make_train.txt','r+')
     fdata = f1.readlines()
     f1.seek(0)
     f1.truncate()
